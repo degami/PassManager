@@ -1,0 +1,5 @@
+[
+    {"caption": "PassManager: Open Browser","command": "pass_manager_open_layout"},
+    {"caption": "PassManager: Close Browser","command": "pass_manager_close_layout"},
+    {"caption": "PassManager: Get password","command": "pass_manager_palette"}
+]

@@ -1,0 +1,7 @@
+Usage instructions:
+
+Requirements:
+
+  * pass Password manager ( https://www.passwordstore.org )
+
+Use the command palette or the side panel to navigate into your stored password and copy the password value into the current view / clipboard
