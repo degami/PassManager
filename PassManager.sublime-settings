@@ -1,6 +1,6 @@
 {
   "pass_executable": "pass",
-  "pass_directory": "/home/mirko/.password-store",
+  "pass_directory": "/path/to/.password-store",
   "use_loading": true,
   "one_panel_layout": {
     "cols": [0.0, 0.65, 1.0], 
