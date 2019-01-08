@@ -35,7 +35,7 @@ class _passManagerUtils:
 
     def get_pass_executable(self):
         settings = sublime.load_settings('PassManager.sublime-settings')
-        return settings.get('pass_executable') or 'pass'
+        return settings.get('pass_executable', 'pass')
 
     def get_password(self, password_path):
         try:            
@@ -57,7 +57,7 @@ class _passManagerUtils:
 
     def get_pass_storage(self):
         settings = sublime.load_settings('PassManager.sublime-settings')
-        return settings.get('pass_directory') or False
+        return settings.get('pass_directory', False)
 
     def _scandir(self, path):
       out = {'dirs':{}, 'files':[]}
@@ -79,11 +79,11 @@ class _passManagerUtils:
         self.window.settings().erase(semaphore_name)
 
     def has_semaphore(self, semaphore_name):
-        return self.window.settings().get(semaphore_name) == True
+        return self.window.settings().get(semaphore_name, False) == True
 
 class RefreshBrowserViewCommand(sublime_plugin.WindowCommand):
     def run(self):
-        window = sublime.active_window()
+        window = self.window
         views = []
         view = self.open_new_view(window, 1, 'PassManager')
         views.append(view)
@@ -104,7 +104,7 @@ class RefreshBrowserViewCommand(sublime_plugin.WindowCommand):
 
     def get_use_loading(self):
         settings = sublime.load_settings('PassManager.sublime-settings')
-        use_loading = settings.get('use_loading') or False
+        use_loading = settings.get('use_loading', False)
         if( isinstance(use_loading, bool) ):
             return use_loading
         return False
@@ -161,15 +161,10 @@ class FillBrowserViewCommand(sublime_plugin.TextCommand):
             view.insert(edit, view.size(), file.strip('.gpg'))
             endregion = view.size()
             regions.append(sublime.Region(initregion,endregion))
-            rp = view.window().settings().get('regions-paths') or {}
+            rp = view.window().settings().get('regions-paths', {})
             rp.update( { str(initregion)+':'+str(endregion) : path + file } )
             view.window().settings().set('regions-paths', rp)
         return regions
-
-class WriteViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, args):
-      text=args.get('text')
-      self.view.insert(edit, self.view.size(), text)
 
 class PassManagerOpenLayoutCommand(sublime_plugin.WindowCommand):
     def __init__(self, args):
@@ -192,7 +187,7 @@ class PassManagerOpenLayoutCommand(sublime_plugin.WindowCommand):
 
     def get_layout_config(self):
         settings = sublime.load_settings('PassManager.sublime-settings')
-        one_panel_layout = settings.get('one_panel_layout') or None
+        one_panel_layout = settings.get('one_panel_layout', None)
         try:
           if( one_panel_layout != None and len( one_panel_layout.get('cells') ) == 2):
             return one_panel_layout
@@ -214,7 +209,7 @@ class PassManagerCloseLayoutCommand(sublime_plugin.WindowCommand):
     def run(self):
         window = sublime.active_window()
         settings = sublime.load_settings('pass_manager.sublime-settings')
-        oldlayout = settings.get('php_class_browser_revert_layout')
+        oldlayout = settings.get('php_class_browser_revert_layout', None)
         if( oldlayout != None ):
             window.set_layout(oldlayout)
         else:
@@ -263,7 +258,7 @@ class PassManagerPaletteCommand(sublime_plugin.WindowCommand):
               sublime.active_window().show_quick_panel(self.getLevel(self.currentpath), self.on_done)
           else:
               view = self.window.active_view()
-              view.run_command('write_view',{'args': {'text': self.utils.get_password(self.currentpath + '/' + selected) } })
+              view.run_command('append',{'characters': self.utils.get_password(self.currentpath + '/' + selected) })
               self.currentpath = ''
 
   def run(self):
